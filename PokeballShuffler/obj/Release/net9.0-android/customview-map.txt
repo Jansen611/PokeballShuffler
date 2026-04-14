@@ -1,0 +1,80 @@
+@string/appbar_scrolling_view_behavior;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/layout/fragment_backstack.xml
+@string/appbar_scrolling_view_behavior;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/layout/navigationlayout.xml
+adaptive-icon;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon_round.xml
+adaptive-icon;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon.xml
+alpha;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/enterfromleft.xml
+alpha;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/exittoleft.xml
+alpha;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_enter_anim.xml
+alpha;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_exit_anim.xml
+alpha;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_pop_enter_anim.xml
+alpha;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_pop_exit_anim.xml
+androidx.coordinatorlayout.widget.CoordinatorLayout;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/layout/shellcontent.xml
+androidx.coordinatorlayout.widget.CoordinatorLayout;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/layout/navigationlayout.xml
+androidx.drawerlayout.widget.DrawerLayout;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/layout/drawer_layout.xml
+androidx.fragment.app.FragmentContainerView;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/layout/fragment_backstack.xml
+androidx.fragment.app.FragmentContainerView;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/layout/navigationlayout.xml
+attr;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/attr.xml
+background;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon_round.xml
+background;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon.xml
+bitmap;obj/Release/net9.0-android/resizetizer/sp/drawable-v31/maui_splash_image.xml
+bitmap;obj/Release/net9.0-android/resizetizer/sp/drawable/maui_splash_image.xml
+cache-path;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/159/jl/res/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
+color;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/colors.xml
+color;obj/Release/net9.0-android/res/values/colors.xml
+color;obj/Release/net9.0-android/resizetizer/sp/values/maui_colors.xml
+com.google.android.material.appbar.AppBarLayout;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/layout/flyoutcontent.xml
+com.google.android.material.appbar.AppBarLayout;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/layout/shellcontent.xml
+com.google.android.material.appbar.AppBarLayout;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/layout/navigationlayout.xml
+declare-styleable;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/attr.xml
+external-cache-path;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/159/jl/res/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
+external-path;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/159/jl/res/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
+foreground;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon_round.xml
+foreground;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon.xml
+item;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/157/jl/res/values/values.xml
+item;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/drawable/maui_splash.xml
+item;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values-v35/styles.xml
+item;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/styles.xml
+item;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/162/jl/res/values/values.xml
+item;obj/Release/net9.0-android/resizetizer/sp/drawable-v31/maui_splash_image.xml
+item;obj/Release/net9.0-android/resizetizer/sp/drawable/maui_splash_image.xml
+layer-list;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/drawable/maui_splash_image.xml
+layer-list;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/drawable/maui_splash.xml
+layer-list;obj/Release/net9.0-android/resizetizer/sp/drawable-v31/maui_splash_image.xml
+layer-list;obj/Release/net9.0-android/resizetizer/sp/drawable/maui_splash_image.xml
+microsoft.maui.controls.platform.compatibility.ShellFlyoutLayout;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/layout/flyoutcontent.xml
+monochrome;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon_round.xml
+monochrome;obj/Release/net9.0-android/resizetizer/r/mipmap-anydpi-v26/appicon.xml
+paths;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/159/jl/res/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
+resources;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/values/strings.xml
+resources;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/157/jl/res/values/values.xml
+resources;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values-v35/styles.xml
+resources;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/attr.xml
+resources;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/colors.xml
+resources;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/styles.xml
+resources;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/162/jl/res/values/values.xml
+resources;obj/Release/net9.0-android/res/values/colors.xml
+resources;obj/Release/net9.0-android/resizetizer/sp/values/maui_colors.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/enterfromleft.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/enterfromright.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/exittoleft.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/exittoright.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_enter_anim.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_exit_anim.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_pop_enter_anim.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_pop_exit_anim.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_modal_default_enter_anim.xml
+set;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_modal_default_exit_anim.xml
+string;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/values/strings.xml
+string;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/157/jl/res/values/values.xml
+style;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values-v35/styles.xml
+style;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/values/styles.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/enterfromleft.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/enterfromright.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/exittoleft.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/156/jl/res/anim/exittoright.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_enter_anim.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_exit_anim.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_pop_enter_anim.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_default_pop_exit_anim.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_modal_default_enter_anim.xml
+translate;/Users/jansen/Code Space/来吧宝可梦/PokeballShuffler/obj/Release/net9.0-android/lp/158/jl/res/anim/nav_modal_default_exit_anim.xml

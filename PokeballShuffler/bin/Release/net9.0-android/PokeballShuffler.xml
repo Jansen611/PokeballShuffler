@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PokeballShuffler</name>
+    </assembly>
+    <members>
+        <member name="T:PokeballShuffler.Models.BallType">
+            <summary>
+            Types of Pokeball available in the game.
+            </summary>
+        </member>
+        <member name="T:PokeballShuffler.Models.Pokeball">
+            <summary>
+            Represents a single Pokeball instance with its type and image source.
+            </summary>
+        </member>
+        <member name="T:PokeballShuffler.ViewModels.MainViewModel">
+            <summary>
+            Main ViewModel for the Pokeball Shuffler game.
+            Handles all game logic: shuffle draws, basket management, reset.
+            </summary>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="M:PokeballShuffler.ViewModels.MainViewModel.CreateInitialPool">
+            <summary>
+            Creates the initial pool of 15 balls:
+            5 Poké Ball, 4 Premier Ball, 3 Great Ball, 2 Ultra Ball, 1 Master Ball.
+            </summary>
+        </member>
+        <member name="M:PokeballShuffler.ViewModels.MainViewModel.ShuffleAsync">
+            <summary>
+            Performs the next shuffle: draws balls from pool into the next basket.
+            </summary>
+        </member>
+        <member name="M:PokeballShuffler.ViewModels.MainViewModel.Reset">
+            <summary>
+            Resets the game: clears all baskets, refills the pool, resets round counter.
+            </summary>
+        </member>
+        <member name="F:PokeballShuffler.ViewModels.MainViewModel.shuffleCommand">
+            <summary>The backing field for <see cref="P:PokeballShuffler.ViewModels.MainViewModel.ShuffleCommand"/>.</summary>
+        </member>
+        <member name="P:PokeballShuffler.ViewModels.MainViewModel.ShuffleCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:PokeballShuffler.ViewModels.MainViewModel.ShuffleAsync"/>.</summary>
+        </member>
+        <member name="F:PokeballShuffler.ViewModels.MainViewModel.resetCommand">
+            <summary>The backing field for <see cref="P:PokeballShuffler.ViewModels.MainViewModel.ResetCommand"/>.</summary>
+        </member>
+        <member name="P:PokeballShuffler.ViewModels.MainViewModel.ResetCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IRelayCommand"/> instance wrapping <see cref="M:PokeballShuffler.ViewModels.MainViewModel.Reset"/>.</summary>
+        </member>
+        <member name="T:PokeballShuffler.Resource">
+            <summary>
+            Android Resource Designer class.
+            Exposes the Android Resource designer assembly into the project Namespace.
+            </summary>
+        </member>
+    </members>
+</doc>
