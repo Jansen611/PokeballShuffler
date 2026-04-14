@@ -45,13 +45,14 @@ public class MainPage : ContentPage
 
     private void BuildUI()
     {
-        // Create basket containers
+        // Create basket containers — fixed height to hold up to 4 balls (50px each + 6px spacing × 3)
         for (int i = 0; i < 4; i++)
         {
             _basketContainers[i] = new VerticalStackLayout
             {
                 Spacing = 6,
-                Padding = new Thickness(4)
+                Padding = new Thickness(4),
+                HeightRequest = 218  // 4 × 50 (ball height) + 3 × 6 (spacing)
             };
         }
 
