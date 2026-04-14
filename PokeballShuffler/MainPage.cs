@@ -175,7 +175,62 @@ public class MainPage : ContentPage
             Content = undrawnContent
         };
 
-        // Top row: 4 baskets + undrawn area
+        // Top inventory panel: original ball distribution (static reference)
+        var inventoryItems = new (string image, int count)[]
+        {
+            ("poke_ball.png",    5),
+            ("premier_ball.png", 4),
+            ("great_ball.png",   3),
+            ("ultra_ball.png",   2),
+            ("master_ball.png",  1),
+        };
+
+        var inventoryRow = new HorizontalStackLayout
+        {
+            Spacing = 20,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+        };
+
+        foreach (var (imgSrc, count) in inventoryItems)
+        {
+            inventoryRow.Add(new VerticalStackLayout
+            {
+                Spacing = 4,
+                HorizontalOptions = LayoutOptions.Center,
+                Children =
+                {
+                    new Image
+                    {
+                        Source = imgSrc,
+                        WidthRequest = 44,
+                        HeightRequest = 44,
+                        HorizontalOptions = LayoutOptions.Center,
+                    },
+                    new Label
+                    {
+                        Text = $"×{count}",
+                        FontSize = 14,
+                        FontAttributes = FontAttributes.Bold,
+                        TextColor = Colors.White,
+                        HorizontalOptions = LayoutOptions.Center,
+                    }
+                }
+            });
+        }
+
+        var inventoryPanel = new Border
+        {
+            BackgroundColor = Color.FromArgb("#16213e"),
+            Stroke = Color.FromArgb("#0f3460"),
+            StrokeThickness = 1,
+            StrokeShape = new RoundRectangle { CornerRadius = 12 },
+            Padding = new Thickness(20, 12),
+            HorizontalOptions = LayoutOptions.Center,
+            Content = inventoryRow
+        };
+
+        // Middle row: 4 baskets + undrawn area
         var topRow = new HorizontalStackLayout
         {
             HorizontalOptions = LayoutOptions.Center,
@@ -198,21 +253,25 @@ public class MainPage : ContentPage
         bottomRow.Add(_shuffleBtn);
         bottomRow.Add(_resetBtn);
 
-        // Main grid: top row + bottom buttons
+        // Main grid: inventory (Auto) + baskets (Star, centered) + buttons (Auto)
+        // Using Star for the middle row ensures the visual gap above baskets == gap below baskets.
         var grid = new Grid
         {
             RowDefinitions = new RowDefinitionCollection
             {
+                new RowDefinition { Height = GridLength.Auto },
                 new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
                 new RowDefinition { Height = GridLength.Auto }
             },
             Padding = new Thickness(16),
-            RowSpacing = 24
+            RowSpacing = 16
         };
+        grid.Add(inventoryPanel);
         grid.Add(topRow);
         grid.Add(bottomRow);
-        Grid.SetRow(topRow, 0);
-        Grid.SetRow(bottomRow, 1);
+        Grid.SetRow(inventoryPanel, 0);
+        Grid.SetRow(topRow, 1);
+        Grid.SetRow(bottomRow, 2);
 
         return grid;
     }
