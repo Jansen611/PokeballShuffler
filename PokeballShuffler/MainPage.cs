@@ -32,6 +32,11 @@ public class MainPage : ContentPage
             {
                 _shuffleBtn.IsEnabled = _vm.CanShuffle;
             }
+            else if (e.PropertyName == nameof(MainViewModel.PoolCount))
+            {
+                // Update label immediately after each ball is drawn (before animation completes)
+                UpdateRemainingLabel(_vm.PoolCount);
+            }
         };
 
         BuildUI();
@@ -254,26 +259,16 @@ public class MainPage : ContentPage
             await Task.Delay(400); // Wait for Basket4 animation to fully complete
             await PopulateUndrawnAsync();
         }
-
-        // Update remaining balls label based on current round
-        UpdateRemainingLabel();
     }
 
-    private void UpdateRemainingLabel()
+    private void UpdateRemainingLabel(int poolCount)
     {
-        // Draw counts per round: 4, 3, 2, 1
-        // CurrentRoundDisplay = _currentRound + 1, so completed rounds = CurrentRoundDisplay - 1
-        int[] drawCounts = { 4, 3, 2, 1 };
-        int completedRounds = Math.Min(_vm.CurrentRoundDisplay - 1, drawCounts.Length);
-        int drawn = 0;
-        for (int i = 0; i < completedRounds; i++)
-            drawn += drawCounts[i];
-        int remaining = 15 - drawn;
-        _undrawnSubLabel.Text = $"{remaining} remaining";
+        _undrawnSubLabel.Text = $"{poolCount} remaining";
     }
 
     private async Task PopulateUndrawnAsync()
     {
+        // Label is already correct (set by PoolCount PropertyChanged handler during draw) — do not touch it here
         await Task.Delay(200);
         foreach (var ball in _vm.UndrawnBalls)
         {

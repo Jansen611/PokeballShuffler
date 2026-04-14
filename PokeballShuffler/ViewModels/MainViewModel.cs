@@ -29,6 +29,9 @@ public partial class MainViewModel : ObservableObject
     // Current round display (1-based for user display)
     public int CurrentRoundDisplay => _currentRound + 1;
 
+    // Number of balls still in the pool (undrawn)
+    public int PoolCount => _pool.Count;
+
     // Whether Shuffle button is enabled
     public bool CanShuffle => _currentRound < 4;
 
@@ -98,6 +101,9 @@ public partial class MainViewModel : ObservableObject
             // Raise event for View to animate this ball
             BallAddedToBasket?.Invoke(ball, _currentRound);
 
+            // Notify UI that pool count changed (updates "remaining" label immediately)
+            OnPropertyChanged(nameof(PoolCount));
+
             // Small delay between each ball appearing (for staggered animation)
             await Task.Delay(150);
         }
@@ -136,6 +142,7 @@ public partial class MainViewModel : ObservableObject
 
         OnPropertyChanged(nameof(CurrentRoundDisplay));
         OnPropertyChanged(nameof(CanShuffle));
+        OnPropertyChanged(nameof(PoolCount));
         ShuffleCommand.NotifyCanExecuteChanged();
     }
 }
