@@ -21,7 +21,7 @@
 		<Nullable>enable</Nullable>
 
 		<!-- Display name -->
-		<ApplicationTitle>PokeballShuffler</ApplicationTitle>
+		<ApplicationTitle>来吧宝可梦</ApplicationTitle>
 
 		<!-- App Identifier -->
 		<ApplicationId>com.companyname.pokeballshuffler</ApplicationId>
@@ -57,6 +57,14 @@
 
 		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Exclude XAML code-behind; UI is built entirely in MainPage.cs -->
+		<MauiXaml Remove="MainPage.xaml" />
+		<None Include="MainPage.xaml" />
+		<Compile Remove="MainPage.xaml.cs" />
+		<None Include="MainPage.xaml.cs" />
 	</ItemGroup>
 
 	<ItemGroup>

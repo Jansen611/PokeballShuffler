@@ -138,15 +138,6 @@ public class MainPage : ContentPage
             };
         }
 
-        // Basket row
-        var basketRow = new HorizontalStackLayout
-        {
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
-            Spacing = 16
-        };
-        foreach (var frame in basketFrames) basketRow.Add(frame);
-
         // Undrawn area
         var undrawnLabel = new Label
         {
@@ -175,36 +166,48 @@ public class MainPage : ContentPage
             StrokeThickness = 1,
             StrokeShape = new RoundRectangle { CornerRadius = 12 },
             Padding = new Thickness(12),
+            WidthRequest = 160,
             Content = undrawnContent
         };
 
-        // Control panel
-        var controlPanel = new VerticalStackLayout
+        // Top row: 4 baskets + undrawn area
+        var topRow = new HorizontalStackLayout
         {
+            HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center,
-            Spacing = 24,
-            Padding = new Thickness(24, 0, 0, 0),
-            WidthRequest = 220
+            Spacing = 16
         };
-        controlPanel.Add(undrawnFrame);
-        controlPanel.Add(_roundLabel);
-        controlPanel.Add(_shuffleBtn);
-        controlPanel.Add(_resetBtn);
+        foreach (var frame in basketFrames) topRow.Add(frame);
+        topRow.Add(undrawnFrame);
 
-        // Main grid
+        // Bottom row: Round label + Shuffle + Reset buttons
+        var bottomRow = new HorizontalStackLayout
+        {
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+            Spacing = 24
+        };
+        _shuffleBtn.WidthRequest = 160;
+        _resetBtn.WidthRequest = 120;
+        bottomRow.Add(_roundLabel);
+        bottomRow.Add(_shuffleBtn);
+        bottomRow.Add(_resetBtn);
+
+        // Main grid: top row + bottom buttons
         var grid = new Grid
         {
-            ColumnDefinitions = new ColumnDefinitionCollection
+            RowDefinitions = new RowDefinitionCollection
             {
-                new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
-                new ColumnDefinition { Width = GridLength.Auto }
+                new RowDefinition { Height = new GridLength(1, GridUnitType.Star) },
+                new RowDefinition { Height = GridLength.Auto }
             },
-            Padding = new Thickness(16)
+            Padding = new Thickness(16),
+            RowSpacing = 24
         };
-        grid.Add(basketRow);
-        grid.Add(controlPanel);
-        Grid.SetColumn(basketRow, 0);
-        Grid.SetColumn(controlPanel, 1);
+        grid.Add(topRow);
+        grid.Add(bottomRow);
+        Grid.SetRow(topRow, 0);
+        Grid.SetRow(bottomRow, 1);
 
         return grid;
     }
