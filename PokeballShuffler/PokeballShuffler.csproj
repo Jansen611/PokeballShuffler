@@ -60,14 +60,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<!-- Exclude XAML code-behind; UI is built entirely in MainPage.cs -->
-		<MauiXaml Remove="MainPage.xaml" />
-		<None Include="MainPage.xaml" />
-		<Compile Remove="MainPage.xaml.cs" />
-		<None Include="MainPage.xaml.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />

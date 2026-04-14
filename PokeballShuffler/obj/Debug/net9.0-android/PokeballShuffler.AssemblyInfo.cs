@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PokeballShuffler")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+fdfe60599669942d31592a816e2e0aae2e7a4562")]
 [assembly: System.Reflection.AssemblyProductAttribute("PokeballShuffler")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PokeballShuffler")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
