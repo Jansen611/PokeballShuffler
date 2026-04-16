@@ -18,14 +18,70 @@ public class MainPage : ContentPage
     private Label _roundLabel;
     private Button _shuffleBtn;
     private Button _resetBtn;
+    private Button _modeToggleBtn;
+
+    // Character avatar images (created on demand per shuffle)
+    private Image? _char1Avatar;
+    private Image? _char2Avatar;
+    private Image? _hiddenBallImage;
+    private Grid? _charSlot;        // Overlays hidden ball + char1 in one layout slot
+    private BoxView? _char2Spacer;   // Spacer to align char2 with char1 position
+
+    // Theme color sets
+    private readonly (Color bg, Color basketBg, Color basketStroke, Color undrawnBg,
+                      Color undrawnStroke, Color accent, Color textPrimary, Color textSecondary,
+                      Color shuffleBg, Color resetBg, Color resetText, Color modeBtnNormal, Color modeBtnExtended)
+        _darkColors;
+
+    private readonly (Color bg, Color basketBg, Color basketStroke, Color undrawnBg,
+                      Color undrawnStroke, Color accent, Color textPrimary, Color textSecondary,
+                      Color shuffleBg, Color resetBg, Color resetText, Color modeBtnNormal, Color modeBtnExtended)
+        _lightColors;
+
+    private bool _isExtendedMode;
 
     public MainPage()
     {
         _vm = new MainViewModel();
         BindingContext = _vm;
 
-        // Subscribe to ball addition events for animation triggering
+        // Dark theme (Extended mode)
+        _darkColors = (
+            bg: Color.FromArgb("#1a1a2e"),
+            basketBg: Color.FromArgb("#16213e"),
+            basketStroke: Color.FromArgb("#0f3460"),
+            undrawnBg: Color.FromArgb("#0f3460"),
+            undrawnStroke: Color.FromArgb("#e94560"),
+            accent: Color.FromArgb("#e94560"),
+            textPrimary: Colors.White,
+            textSecondary: Color.FromArgb("#a0a0a0"),
+            shuffleBg: Color.FromArgb("#e94560"),
+            resetBg: Color.FromArgb("#0f3460"),
+            resetText: Color.FromArgb("#a0a0a0"),
+            modeBtnNormal: Color.FromArgb("#4a4a6a"),
+            modeBtnExtended: Color.FromArgb("#e94560")
+        );
+
+        // Light theme (Normal mode)
+        _lightColors = (
+            bg: Color.FromArgb("#f0f0f5"),
+            basketBg: Color.FromArgb("#e8eaf0"),
+            basketStroke: Color.FromArgb("#c0c4d0"),
+            undrawnBg: Color.FromArgb("#d0d4e0"),
+            undrawnStroke: Color.FromArgb("#e94560"),
+            accent: Color.FromArgb("#e94560"),
+            textPrimary: Color.FromArgb("#1a1a2e"),
+            textSecondary: Color.FromArgb("#606070"),
+            shuffleBg: Color.FromArgb("#e94560"),
+            resetBg: Color.FromArgb("#c0c4d0"),
+            resetText: Color.FromArgb("#1a1a2e"),
+            modeBtnNormal: Color.FromArgb("#e94560"),
+            modeBtnExtended: Color.FromArgb("#4a4a6a")
+        );
+
+        // Subscribe to events
         _vm.BallAddedToBasket += OnBallAddedToBasket;
+        _vm.Basket4Rerolled += OnBasket4Rerolled;
         _vm.PropertyChanged += (s, e) =>
         {
             if (e.PropertyName == nameof(MainViewModel.CanShuffle))
@@ -34,13 +90,50 @@ public class MainPage : ContentPage
             }
             else if (e.PropertyName == nameof(MainViewModel.PoolCount))
             {
-                // Update label immediately after each ball is drawn (before animation completes)
                 UpdateRemainingLabel(_vm.PoolCount);
+            }
+            else if (e.PropertyName == nameof(MainViewModel.GameMode))
+            {
+                _isExtendedMode = _vm.GameMode == GameMode.Extended;
+                ApplyTheme(_isExtendedMode);
+                UpdateModeButton();
+
+                // Clear all UI and re-add avatars if entering extended mode
+                for (int i = 0; i < 4; i++)
+                    _basketContainers[i].Clear();
+                _undrawnContainer.Clear();
+                _charSlot = null;
+                _char1Avatar = null;
+                _char2Avatar = null;
+                _hiddenBallImage = null;
+                _char2Spacer = null;
+                _isChar1Revealed = false;
+                _roundLabel.Text = "Round 1 of 4";
+                _undrawnSubLabel.Text = "15 remaining";
+                _shuffleBtn.IsEnabled = true;
+                _resetBtn.IsEnabled = false;
+
+                if (_isExtendedMode)
+                    SetupCharAvatars();
+            }
+            else if (e.PropertyName == nameof(MainViewModel.IsChar2SkillAvailable))
+            {
+                UpdateChar2AvatarState();
             }
         };
 
         BuildUI();
         Content = BuildContent();
+        ApplyTheme(_isExtendedMode);
+        UpdateModeButton();
+    }
+
+    private void UpdateModeButton()
+    {
+        if (_modeToggleBtn == null) return;
+        bool isExtended = _vm.GameMode == GameMode.Extended;
+        _modeToggleBtn.Text = isExtended ? "Extended" : "Normal";
+        _modeToggleBtn.BackgroundColor = isExtended ? _darkColors.modeBtnExtended : _lightColors.modeBtnNormal;
     }
 
     private void BuildUI()
@@ -67,7 +160,6 @@ public class MainPage : ContentPage
             Text = "Round 1 of 4",
             FontSize = 18,
             FontAttributes = FontAttributes.Bold,
-            TextColor = Colors.White,
             HorizontalOptions = LayoutOptions.Center
         };
 
@@ -76,8 +168,6 @@ public class MainPage : ContentPage
             Text = "SHUFFLE",
             FontSize = 22,
             FontAttributes = FontAttributes.Bold,
-            BackgroundColor = Color.FromArgb("#e94560"),
-            TextColor = Colors.White,
             CornerRadius = 12,
             HeightRequest = 60
         };
@@ -88,13 +178,67 @@ public class MainPage : ContentPage
             Text = "RESET",
             FontSize = 18,
             FontAttributes = FontAttributes.Bold,
-            BackgroundColor = Color.FromArgb("#0f3460"),
-            TextColor = Color.FromArgb("#a0a0a0"),
             CornerRadius = 12,
             HeightRequest = 50,
             IsEnabled = false
         };
         _resetBtn.Clicked += OnResetClicked;
+
+        _modeToggleBtn = new Button
+        {
+            Text = "普通模式",
+            FontSize = 14,
+            FontAttributes = FontAttributes.Bold,
+            CornerRadius = 8,
+            HeightRequest = 36,
+            Padding = new Thickness(12, 0)
+        };
+        _modeToggleBtn.Clicked += (s, e) => _vm.ToggleGameModeCommand.Execute(null);
+    }
+
+    private void ApplyTheme(bool isExtended)
+    {
+        var c = isExtended ? _darkColors : _lightColors;
+        BackgroundColor = c.bg;
+
+        // Update basket frames via the HorizontalStackLayout in row 1 of the main grid
+        if (Content is AbsoluteLayout rootLayout && rootLayout.Children.FirstOrDefault() is Grid mainGrid)
+        {
+            var basketRow = mainGrid.Children
+                .Where(v => mainGrid.GetRow(v) == 1 && v is HorizontalStackLayout)
+                .Cast<HorizontalStackLayout>()
+                .FirstOrDefault();
+
+            if (basketRow != null)
+            {
+                foreach (var child in basketRow.Children.OfType<Border>())
+                {
+                    bool isUndrawn = child.Content is VerticalStackLayout vsl &&
+                                     vsl.Children.FirstOrDefault() is Label lbl &&
+                                     lbl.Text == "Undrawn";
+                    child.BackgroundColor = isUndrawn ? c.undrawnBg : c.basketBg;
+                    child.Stroke = isUndrawn ? c.undrawnStroke : c.basketStroke;
+                }
+            }
+        }
+
+        // Update bottom row buttons
+        if (_shuffleBtn != null)
+        {
+            _shuffleBtn.BackgroundColor = c.shuffleBg;
+            _shuffleBtn.TextColor = Colors.White;
+        }
+        if (_resetBtn != null)
+        {
+            _resetBtn.BackgroundColor = c.resetBg;
+            _resetBtn.TextColor = c.resetText;
+        }
+
+        // Update round label
+        if (_roundLabel != null)
+        {
+            _roundLabel.TextColor = c.textPrimary;
+        }
     }
 
     private View BuildContent()
@@ -265,7 +409,9 @@ public class MainPage : ContentPage
                 new RowDefinition { Height = GridLength.Auto }
             },
             Padding = new Thickness(16),
-            RowSpacing = 16
+            RowSpacing = 16,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill
         };
         grid.Add(inventoryPanel);
         grid.Add(topRow);
@@ -274,7 +420,29 @@ public class MainPage : ContentPage
         Grid.SetRow(topRow, 1);
         Grid.SetRow(bottomRow, 2);
 
-        return grid;
+        // Mode toggle button overlaid at top-right corner
+        var modeOverlay = new StackLayout
+        {
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.Start,
+            Padding = new Thickness(0, 16, 16, 0),
+            Children = { _modeToggleBtn }
+        };
+
+        // Wrap in AbsoluteLayout so the mode button floats over the grid
+        var rootLayout = new AbsoluteLayout
+        {
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill
+        };
+        rootLayout.Add(grid);
+        rootLayout.Add(modeOverlay);
+        AbsoluteLayout.SetLayoutBounds(grid, new Rect(0, 0, 1, 1));
+        AbsoluteLayout.SetLayoutFlags(grid, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.All);
+        AbsoluteLayout.SetLayoutBounds(modeOverlay, new Rect(1, 0, AbsoluteLayout.AutoSize, AbsoluteLayout.AutoSize));
+        AbsoluteLayout.SetLayoutFlags(modeOverlay, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.PositionProportional);
+
+        return rootLayout;
     }
 
     private async void OnBallAddedToBasket(Pokeball ball, int round)
@@ -288,15 +456,52 @@ public class MainPage : ContentPage
             Source = ball.ImageSource,
             WidthRequest = 50,
             HeightRequest = 50,
-            Opacity = 1,   // Start visible — FadeTo can fail on newly-added views
+            Opacity = 1,
             Scale = 0.3
         };
 
-        container.Add(image);
+        // In extended mode, insert balls before the avatar elements
+        int insertIndex = container.Count;
+        if (_isExtendedMode && round == 0 && _charSlot != null)
+            insertIndex = container.IndexOf(_charSlot);
+        else if (_isExtendedMode && round == 3 && _char2Avatar != null)
+            insertIndex = _char2Spacer != null ? container.IndexOf(_char2Spacer) : container.IndexOf(_char2Avatar);
 
-        // Yield to let MAUI attach the handler before animating
+        if (insertIndex < 0) insertIndex = container.Count;
+        container.Insert(insertIndex, image);
+
         await Task.Yield();
         await image.ScaleTo(1, 300);
+    }
+
+    private async void OnBasket4Rerolled(Pokeball oldBall, Pokeball newBall)
+    {
+        var container = _basketContainers[3];
+        if (container.Count == 0) return;
+
+        // The ball image is always the first child (index 0); char2 spacer/avatar come after
+        var oldImage = container[0] as Image;
+        if (oldImage != null)
+        {
+            await oldImage.FadeTo(0, 200);
+            container.Remove(oldImage);
+        }
+
+        var newImage = new Image
+        {
+            Source = newBall.ImageSource,
+            WidthRequest = 50,
+            HeightRequest = 50,
+            Opacity = 0,
+            Scale = 0.3
+        };
+        // Insert at position 0 so it stays before char2 spacer/avatar
+        container.Insert(0, newImage);
+        await Task.Yield();
+        await Task.WhenAll(
+            newImage.FadeTo(1, 200),
+            newImage.ScaleTo(1, 200)
+        );
     }
 
     private async void OnShuffleClicked(object? sender, EventArgs e)
@@ -306,19 +511,143 @@ public class MainPage : ContentPage
 
         await _vm.ShuffleCommand.ExecuteAsync(null);
 
-        // CurrentRoundDisplay = completed rounds + 1; cap display at 4 when all done
+        // After round 0 in extended mode, update the hidden ball image source
+        if (_isExtendedMode && _hiddenBallImage != null && _vm.HiddenBall != null)
+        {
+            _hiddenBallImage.Source = _vm.HiddenBall.ImageSource;
+        }
+
         int nextRound = Math.Min(_vm.CurrentRoundDisplay, 4);
         _roundLabel.Text = $"Round {nextRound} of 4";
 
         _shuffleBtn.IsEnabled = _vm.CanShuffle;
         _resetBtn.IsEnabled = true;
 
-        if (!_vm.CanShuffle)  // All 4 rounds done (CanShuffle = false when _currentRound >= 4)
+        // After all rounds done, populate undrawn area
+        if (!_vm.CanShuffle)
         {
-            _shuffleBtn.IsEnabled = false;
-            await Task.Delay(400); // Wait for Basket4 animation to fully complete
+            await Task.Delay(400);
             await PopulateUndrawnAsync();
         }
+    }
+
+    private void SetupCharAvatars()
+    {
+        if (!_isExtendedMode) return;
+        if (_charSlot != null) return; // Already set up
+
+        // Char1: Grid overlay with hidden ball image + char1 avatar in Basket 1
+        _hiddenBallImage = new Image
+        {
+            Source = "",  // Source updated after round 0 draws the hidden ball
+            WidthRequest = 50,
+            HeightRequest = 50,
+            Opacity = 0,
+            Scale = 0.3,
+            HorizontalOptions = LayoutOptions.Center
+        };
+
+        _char1Avatar = CreateCharAvatar("char1_avatar.png");
+        _char1Avatar.HorizontalOptions = LayoutOptions.Center;
+
+        _charSlot = new Grid
+        {
+            HeightRequest = 50,
+            WidthRequest = 50,
+            HorizontalOptions = LayoutOptions.Center
+        };
+        _charSlot.Add(_hiddenBallImage);
+        _charSlot.Add(_char1Avatar);
+        _charSlot.GestureRecognizers.Add(new TapGestureRecognizer
+        {
+            Command = new Command(() => ToggleChar1Reveal())
+        });
+
+        _basketContainers[0].Add(_charSlot);
+
+        // Char2: avatar in Basket 4
+        _char2Avatar = CreateCharAvatar("char2_avatar.png");
+        _char2Avatar.HorizontalOptions = LayoutOptions.Center;
+        _char2Avatar.GestureRecognizers.Add(new TapGestureRecognizer
+        {
+            Command = new Command(() => OnChar2Clicked())
+        });
+
+        _basketContainers[3].Add(_char2Avatar);
+        UpdateChar2AvatarState();
+    }
+
+    private Image CreateCharAvatar(string imageSource)
+    {
+        var avatar = new Image
+        {
+            Source = imageSource,
+            WidthRequest = 50,
+            HeightRequest = 50,
+            Opacity = 1
+        };
+        // Clip to a rounded-rect matching the avatar's fixed size (Rect.Zero would clip to nothing)
+        avatar.Clip = new RoundRectangleGeometry(new CornerRadius(8), new Rect(0, 0, 50, 50));
+        return avatar;
+    }
+
+    private bool _isChar1Revealed = false;
+
+    private void ToggleChar1Reveal()
+    {
+        if (_hiddenBallImage == null || _char1Avatar == null) return;
+
+        if (_isChar1Revealed)
+        {
+            // Hide the revealed ball, show char1 avatar (fade transition)
+            _hiddenBallImage.Opacity = 0;
+            _hiddenBallImage.Scale = 0.3;
+            _char1Avatar.Opacity = 1;
+            _char1Avatar.Scale = 1;
+        }
+        else
+        {
+            // Show the hidden ball (animate in), hide char1 avatar
+            _hiddenBallImage.Opacity = 1;
+            _hiddenBallImage.Scale = 0.3;
+            _ = _hiddenBallImage.ScaleTo(1, 300);
+            _char1Avatar.Opacity = 0;
+            _char1Avatar.Scale = 0.3;
+        }
+        _isChar1Revealed = !_isChar1Revealed;
+    }
+
+    private void OnChar2Clicked()
+    {
+        if (!_vm.IsChar2SkillAvailable) return;
+        _vm.Char2RerollCommand.Execute(null);
+    }
+
+    private void UpdateChar2AvatarState()
+    {
+        if (_char2Avatar == null) return;
+        _char2Avatar.Opacity = _vm.IsChar2SkillAvailable ? 1.0 : 0.3;
+    }
+
+    private void ClearCharAvatars()
+    {
+        // Remove the char1 overlay Grid from Basket 1
+        if (_charSlot != null && _basketContainers[0].Contains(_charSlot))
+            _basketContainers[0].Remove(_charSlot);
+        _charSlot = null;
+        _char1Avatar = null;
+        _hiddenBallImage = null;
+
+        // Remove char2 avatar and spacer from Basket 4
+        if (_char2Avatar != null && _basketContainers[3].Contains(_char2Avatar))
+            _basketContainers[3].Remove(_char2Avatar);
+        _char2Avatar = null;
+
+        if (_char2Spacer != null && _basketContainers[3].Contains(_char2Spacer))
+            _basketContainers[3].Remove(_char2Spacer);
+        _char2Spacer = null;
+
+        _isChar1Revealed = false;
     }
 
     private void UpdateRemainingLabel(int poolCount)
@@ -328,7 +657,6 @@ public class MainPage : ContentPage
 
     private async Task PopulateUndrawnAsync()
     {
-        // Label is already correct (set by PoolCount PropertyChanged handler during draw) — do not touch it here
         await Task.Delay(200);
         foreach (var ball in _vm.UndrawnBalls)
         {
@@ -360,6 +688,14 @@ public class MainPage : ContentPage
         }
         _undrawnContainer.Clear();
 
+        // Clear character avatar references
+        _charSlot = null;
+        _char1Avatar = null;
+        _char2Avatar = null;
+        _hiddenBallImage = null;
+        _char2Spacer = null;
+        _isChar1Revealed = false;
+
         // Update UI elements
         _roundLabel.Text = "Round 1 of 4";
         _undrawnSubLabel.Text = "15 remaining";
@@ -367,5 +703,9 @@ public class MainPage : ContentPage
         _resetBtn.IsEnabled = false;
 
         _vm.ResetCommand.Execute(null);
+
+        // Re-add avatars if in extended mode
+        if (_isExtendedMode)
+            SetupCharAvatars();
     }
 }

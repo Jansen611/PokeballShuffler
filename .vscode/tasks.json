@@ -29,7 +29,7 @@
         {
             "label": "Install APK to Android Device",
             "type": "shell",
-            "command": "adb -s \"adb-BPADSE2503006240-GrfEiQ._adb-tls-connect._tcp\" install -r \"PokeballShuffler/bin/Release/net9.0-android/com.companyname.pokeballshuffler-Signed.apk\"",
+            "command": "adb install -r \"PokeballShuffler/bin/Release/net9.0-android/com.companyname.pokeballshuffler-Signed.apk\"",
             "group": "build",
             "presentation": {
                 "reveal": "always",
