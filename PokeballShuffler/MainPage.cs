@@ -601,6 +601,7 @@ public class MainPage : ContentPage
         btn_reset.IsEnabled = false;
 
         bool isFinalRoundShuffle = _vm.CanShuffle && _vm.CurrentRoundDisplay == 4;
+        bool shouldAutoRevealUndrawnAfterFinalShuffle = isFinalRoundShuffle && !_isExtendedMode;
         if (isFinalRoundShuffle)
         {
             _isUndrawnAnimating = true;
@@ -627,8 +628,9 @@ public class MainPage : ContentPage
             btn_shuffle.IsEnabled = _vm.CanShuffle;
             btn_reset.IsEnabled = true;
 
-            // After all rounds done, populate undrawn area
-            if (!_vm.CanShuffle)
+            // In normal mode, reveal undrawn balls right after the final shuffle.
+            // In extended mode, keep undrawn hidden until Char2 is used.
+            if (shouldAutoRevealUndrawnAfterFinalShuffle && !_vm.CanShuffle)
             {
                 await Task.Delay(400);
                 await PopulateUndrawnAsync();
