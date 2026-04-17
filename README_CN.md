@@ -38,7 +38,7 @@
 ## 项目结构
 
 - `PokeballShuffler/MainPage.cs`：UI 构建、主题应用、动画编排
-- `PokeballShuffler/ViewModels/MainViewModel.cs`：游戏流程、隐藏球逻辑、Char2 重抽、命令状态
+- `PokeballShuffler/ViewModels/MainViewModel.cs`：游戏流程、隐藏球逻辑、2号角色 重抽、命令状态
 - `PokeballShuffler/Models/`：数据模型与枚举（`BallType`、`GameMode`、`Pokeball`）
 
 ## 快速开始

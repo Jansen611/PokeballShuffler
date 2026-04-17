@@ -38,7 +38,7 @@ If this project helps other families, players, or makers in the open-source comm
 ## Project Structure
 
 - `PokeballShuffler/MainPage.cs`: UI construction, theme application, animation choreography
-- `PokeballShuffler/ViewModels/MainViewModel.cs`: game flow, hidden-ball logic, Char2 reroll, command state
+- `PokeballShuffler/ViewModels/MainViewModel.cs`: game flow, hidden-ball logic, Character 2 reroll, command state
 - `PokeballShuffler/Models/`: game enums/models (`BallType`, `GameMode`, `Pokeball`)
 
 ## Quick Start
