@@ -575,6 +575,9 @@ public class MainPage : ContentPage
             newImage.ScaleTo(1, 200)
         );
 
+        // Final reveal phase: auto-show Char1 hidden ball when Char2 rerolls.
+        EnsureChar1Revealed();
+
         // Keep Undrawn visuals in sync after Char2 swaps balls.
         await RebuildUndrawnContainerAsync();
     }
@@ -734,6 +737,20 @@ public class MainPage : ContentPage
             _char1Avatar.Scale = 0.3;
         }
         _isChar1Revealed = !_isChar1Revealed;
+    }
+
+    private void EnsureChar1Revealed()
+    {
+        if (_hiddenBallImage == null || _char1Avatar == null) return;
+        if (_vm.HiddenBall == null) return;
+        if (_isChar1Revealed) return;
+
+        _hiddenBallImage.Opacity = 1;
+        _hiddenBallImage.Scale = 0.3;
+        _ = _hiddenBallImage.ScaleTo(1, 300);
+        _char1Avatar.Opacity = 0;
+        _char1Avatar.Scale = 0.3;
+        _isChar1Revealed = true;
     }
 
     private void OnChar2Clicked()
