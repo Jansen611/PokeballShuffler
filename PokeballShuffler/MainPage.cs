@@ -19,6 +19,9 @@ public class MainPage : ContentPage
     private Button _shuffleBtn;
     private Button _resetBtn;
     private Button _modeToggleBtn;
+    private Border? _inventoryPanel;
+    private readonly List<Label> _inventoryCountLabels = new();
+    private readonly List<Label> _basketSubLabels = new();
 
     // Character avatar images (created on demand per shuffle)
     private Image? _char1Avatar;
@@ -65,19 +68,19 @@ public class MainPage : ContentPage
 
         // Light theme (Normal mode)
         _lightColors = (
-            bg: Color.FromArgb("#f0f0f5"),
-            basketBg: Color.FromArgb("#e8eaf0"),
-            basketStroke: Color.FromArgb("#c0c4d0"),
-            undrawnBg: Color.FromArgb("#d0d4e0"),
+            bg: Color.FromArgb("#f6f0df"),
+            basketBg: Color.FromArgb("#eee8d5"),
+            basketStroke: Color.FromArgb("#d8cfb6"),
+            undrawnBg: Color.FromArgb("#e7dfc9"),
             undrawnStroke: Color.FromArgb("#e94560"),
             accent: Color.FromArgb("#e94560"),
-            textPrimary: Color.FromArgb("#1a1a2e"),
-            textSecondary: Color.FromArgb("#606070"),
+            textPrimary: Color.FromArgb("#43565c"),
+            textSecondary: Color.FromArgb("#7a7f73"),
             shuffleBg: Color.FromArgb("#e94560"),
-            resetBg: Color.FromArgb("#c0c4d0"),
-            resetText: Color.FromArgb("#1a1a2e"),
+            resetBg: Color.FromArgb("#d8cfb6"),
+            resetText: Color.FromArgb("#3b3a32"),
             modeBtnNormal: Color.FromArgb("#e94560"),
-            modeBtnExtended: Color.FromArgb("#4a4a6a")
+            modeBtnExtended: Color.FromArgb("#8a8f83")
         );
 
         // Subscribe to events
@@ -136,6 +139,7 @@ public class MainPage : ContentPage
         bool isExtended = _vm.GameMode == GameMode.Extended;
         _modeToggleBtn.Text = isExtended ? "Extended" : "Normal";
         _modeToggleBtn.BackgroundColor = isExtended ? _darkColors.modeBtnExtended : _lightColors.modeBtnNormal;
+        _modeToggleBtn.TextColor = Colors.White;
     }
 
     private void BuildUI()
@@ -203,6 +207,25 @@ public class MainPage : ContentPage
     {
         var c = isExtended ? _darkColors : _lightColors;
         BackgroundColor = c.bg;
+
+        // Update top inventory panel (ball distribution reference)
+        if (_inventoryPanel != null)
+        {
+            _inventoryPanel.BackgroundColor = c.basketBg;
+            _inventoryPanel.Stroke = c.basketStroke;
+        }
+        foreach (var countLabel in _inventoryCountLabels)
+        {
+            countLabel.TextColor = c.textPrimary;
+        }
+        foreach (var subLabel in _basketSubLabels)
+        {
+            subLabel.TextColor = c.textSecondary;
+        }
+        if (_undrawnSubLabel != null)
+        {
+            _undrawnSubLabel.TextColor = c.textSecondary;
+        }
 
         // Update basket frames via the HorizontalStackLayout in row 1 of the main grid
         if (Content is AbsoluteLayout rootLayout && rootLayout.Children.FirstOrDefault() is Grid mainGrid)
@@ -272,6 +295,7 @@ public class MainPage : ContentPage
                 TextColor = Color.FromArgb("#a0a0a0"),
                 HorizontalOptions = LayoutOptions.Center
             };
+            _basketSubLabels.Add(subLabel);
 
             var basketContent = new VerticalStackLayout
             {
@@ -342,6 +366,16 @@ public class MainPage : ContentPage
 
         foreach (var (imgSrc, count) in inventoryItems)
         {
+            var countLabel = new Label
+            {
+                Text = $"×{count}",
+                FontSize = 14,
+                FontAttributes = FontAttributes.Bold,
+                TextColor = Colors.White,
+                HorizontalOptions = LayoutOptions.Center,
+            };
+            _inventoryCountLabels.Add(countLabel);
+
             inventoryRow.Add(new VerticalStackLayout
             {
                 Spacing = 4,
@@ -355,19 +389,12 @@ public class MainPage : ContentPage
                         HeightRequest = 44,
                         HorizontalOptions = LayoutOptions.Center,
                     },
-                    new Label
-                    {
-                        Text = $"×{count}",
-                        FontSize = 14,
-                        FontAttributes = FontAttributes.Bold,
-                        TextColor = Colors.White,
-                        HorizontalOptions = LayoutOptions.Center,
-                    }
+                    countLabel
                 }
             });
         }
 
-        var inventoryPanel = new Border
+        _inventoryPanel = new Border
         {
             BackgroundColor = Color.FromArgb("#16213e"),
             Stroke = Color.FromArgb("#0f3460"),
@@ -416,10 +443,10 @@ public class MainPage : ContentPage
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill
         };
-        grid.Add(inventoryPanel);
+        grid.Add(_inventoryPanel);
         grid.Add(topRow);
         grid.Add(bottomRow);
-        Grid.SetRow(inventoryPanel, 0);
+        Grid.SetRow(_inventoryPanel, 0);
         Grid.SetRow(topRow, 1);
         Grid.SetRow(bottomRow, 2);
 
