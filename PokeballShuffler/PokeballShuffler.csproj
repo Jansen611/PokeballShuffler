@@ -24,7 +24,7 @@
 		<ApplicationTitle>来吧宝可梦</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.pokeballshuffler</ApplicationId>
+		<ApplicationId>com.jansen611.pokeballshuffler</ApplicationId>
 
 		<!-- Versions -->
 		<ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>

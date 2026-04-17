@@ -51,7 +51,7 @@ dotnet build PokeballShuffler/PokeballShuffler.csproj -f net9.0-android -c Debug
 dotnet build PokeballShuffler/PokeballShuffler.csproj -f net9.0-android -c Release
 
 # Install to connected Android device
-adb install -r "PokeballShuffler/bin/Release/net9.0-android/com.companyname.pokeballshuffler-Signed.apk"
+adb install -r "PokeballShuffler/bin/Release/net9.0-android/com.jansen611.pokeballshuffler-Signed.apk"
 ```
 
 VS Code tasks are configured for all of the above — use the task runner.
