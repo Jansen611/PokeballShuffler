@@ -25,7 +25,8 @@ public class MainPage : ContentPage
     private Image? _char2Avatar;
     private Image? _hiddenBallImage;
     private Grid? _charSlot;        // Overlays hidden ball + char1 in one layout slot
-    private BoxView? _char2Spacer;   // Spacer to align char2 with char1 position
+    private readonly List<BoxView> _char1Spacers = new(); // Keep char1 initially at slot 4
+    private readonly List<BoxView> _char2Spacers = new(); // Keep char2 initially at slot 4
 
     // Theme color sets
     private readonly (Color bg, Color basketBg, Color basketStroke, Color undrawnBg,
@@ -106,7 +107,8 @@ public class MainPage : ContentPage
                 _char1Avatar = null;
                 _char2Avatar = null;
                 _hiddenBallImage = null;
-                _char2Spacer = null;
+                _char1Spacers.Clear();
+                _char2Spacers.Clear();
                 _isChar1Revealed = false;
                 _roundLabel.Text = "Round 1 of 4";
                 _undrawnSubLabel.Text = "15 remaining";
@@ -152,7 +154,8 @@ public class MainPage : ContentPage
         _undrawnContainer = new VerticalStackLayout
         {
             Spacing = 4,
-            Padding = new Thickness(4)
+            Padding = new Thickness(4),
+            HeightRequest = 216 // 5 × 40 (ball height) + 4 × 4 (spacing)
         };
 
         _roundLabel = new Label
@@ -460,12 +463,54 @@ public class MainPage : ContentPage
             Scale = 0.3
         };
 
-        // In extended mode, insert balls before the avatar elements
+        // In extended mode, replace placeholder slots so avatars keep their intended positions.
         int insertIndex = container.Count;
         if (_isExtendedMode && round == 0 && _charSlot != null)
-            insertIndex = container.IndexOf(_charSlot);
+        {
+            if (_char1Spacers.Count > 0)
+            {
+                var spacer = _char1Spacers[0];
+                int spacerIndex = container.IndexOf(spacer);
+                if (spacerIndex >= 0)
+                {
+                    container.RemoveAt(spacerIndex);
+                    _char1Spacers.RemoveAt(0);
+                    insertIndex = spacerIndex;
+                }
+                else
+                {
+                    _char1Spacers.RemoveAt(0);
+                    insertIndex = container.IndexOf(_charSlot);
+                }
+            }
+            else
+            {
+                insertIndex = container.IndexOf(_charSlot);
+            }
+        }
         else if (_isExtendedMode && round == 3 && _char2Avatar != null)
-            insertIndex = _char2Spacer != null ? container.IndexOf(_char2Spacer) : container.IndexOf(_char2Avatar);
+        {
+            if (_char2Spacers.Count > 0)
+            {
+                var spacer = _char2Spacers[0];
+                int spacerIndex = container.IndexOf(spacer);
+                if (spacerIndex >= 0)
+                {
+                    container.RemoveAt(spacerIndex);
+                    _char2Spacers.RemoveAt(0);
+                    insertIndex = spacerIndex;
+                }
+                else
+                {
+                    _char2Spacers.RemoveAt(0);
+                    insertIndex = container.IndexOf(_char2Avatar);
+                }
+            }
+            else
+            {
+                insertIndex = container.IndexOf(_char2Avatar);
+            }
+        }
 
         if (insertIndex < 0) insertIndex = container.Count;
         container.Insert(insertIndex, image);
@@ -479,7 +524,7 @@ public class MainPage : ContentPage
         var container = _basketContainers[3];
         if (container.Count == 0) return;
 
-        // The ball image is always the first child (index 0); char2 spacer/avatar come after
+        // The ball image is always the first child (index 0); char2 spacers/avatar come after
         var oldImage = container[0] as Image;
         if (oldImage != null)
         {
@@ -495,13 +540,16 @@ public class MainPage : ContentPage
             Opacity = 0,
             Scale = 0.3
         };
-        // Insert at position 0 so it stays before char2 spacer/avatar
+        // Insert at position 0 so it stays before char2 spacers/avatar
         container.Insert(0, newImage);
         await Task.Yield();
         await Task.WhenAll(
             newImage.FadeTo(1, 200),
             newImage.ScaleTo(1, 200)
         );
+
+        // Keep Undrawn visuals in sync after Char2 swaps balls.
+        await RebuildUndrawnContainerAsync();
     }
 
     private async void OnShuffleClicked(object? sender, EventArgs e)
@@ -515,6 +563,10 @@ public class MainPage : ContentPage
         if (_isExtendedMode && _hiddenBallImage != null && _vm.HiddenBall != null)
         {
             _hiddenBallImage.Source = _vm.HiddenBall.ImageSource;
+        }
+        if (_isExtendedMode)
+        {
+            UpdateChar1AvatarState();
         }
 
         int nextRound = Math.Min(_vm.CurrentRoundDisplay, 4);
@@ -563,9 +615,36 @@ public class MainPage : ContentPage
             Command = new Command(() => ToggleChar1Reveal())
         });
 
+        _char1Spacers.Clear();
+        for (int i = 0; i < 3; i++)
+        {
+            var spacer = new BoxView
+            {
+                WidthRequest = 50,
+                HeightRequest = 50,
+                Opacity = 0,
+                HorizontalOptions = LayoutOptions.Center
+            };
+            _char1Spacers.Add(spacer);
+            _basketContainers[0].Add(spacer);
+        }
         _basketContainers[0].Add(_charSlot);
 
-        // Char2: avatar in Basket 4
+        // Char2: keep 3 slots reserved so avatar starts at slot 4 in Basket 4
+        _char2Spacers.Clear();
+        for (int i = 0; i < 3; i++)
+        {
+            var spacer = new BoxView
+            {
+                WidthRequest = 50,
+                HeightRequest = 50,
+                Opacity = 0,
+                HorizontalOptions = LayoutOptions.Center
+            };
+            _char2Spacers.Add(spacer);
+            _basketContainers[3].Add(spacer);
+        }
+
         _char2Avatar = CreateCharAvatar("char2_avatar.png");
         _char2Avatar.HorizontalOptions = LayoutOptions.Center;
         _char2Avatar.GestureRecognizers.Add(new TapGestureRecognizer
@@ -575,6 +654,7 @@ public class MainPage : ContentPage
 
         _basketContainers[3].Add(_char2Avatar);
         UpdateChar2AvatarState();
+        UpdateChar1AvatarState();
     }
 
     private Image CreateCharAvatar(string imageSource)
@@ -593,9 +673,21 @@ public class MainPage : ContentPage
 
     private bool _isChar1Revealed = false;
 
+    private void UpdateChar1AvatarState()
+    {
+        bool isAvailable = _vm.HiddenBall != null;
+
+        if (_charSlot != null)
+            _charSlot.IsEnabled = isAvailable;
+
+        if (_char1Avatar != null && !_isChar1Revealed)
+            _char1Avatar.Opacity = isAvailable ? 1.0 : 0.3;
+    }
+
     private void ToggleChar1Reveal()
     {
         if (_hiddenBallImage == null || _char1Avatar == null) return;
+        if (_vm.HiddenBall == null) return;
 
         if (_isChar1Revealed)
         {
@@ -634,18 +726,29 @@ public class MainPage : ContentPage
         // Remove the char1 overlay Grid from Basket 1
         if (_charSlot != null && _basketContainers[0].Contains(_charSlot))
             _basketContainers[0].Remove(_charSlot);
+
+        foreach (var spacer in _char1Spacers)
+        {
+            if (_basketContainers[0].Contains(spacer))
+                _basketContainers[0].Remove(spacer);
+        }
+        _char1Spacers.Clear();
+
         _charSlot = null;
         _char1Avatar = null;
         _hiddenBallImage = null;
 
-        // Remove char2 avatar and spacer from Basket 4
+        // Remove char2 avatar and spacers from Basket 4
         if (_char2Avatar != null && _basketContainers[3].Contains(_char2Avatar))
             _basketContainers[3].Remove(_char2Avatar);
         _char2Avatar = null;
 
-        if (_char2Spacer != null && _basketContainers[3].Contains(_char2Spacer))
-            _basketContainers[3].Remove(_char2Spacer);
-        _char2Spacer = null;
+        foreach (var spacer in _char2Spacers)
+        {
+            if (_basketContainers[3].Contains(spacer))
+                _basketContainers[3].Remove(spacer);
+        }
+        _char2Spacers.Clear();
 
         _isChar1Revealed = false;
     }
@@ -679,6 +782,30 @@ public class MainPage : ContentPage
         }
     }
 
+    private async Task RebuildUndrawnContainerAsync()
+    {
+        _undrawnContainer.Clear();
+
+        foreach (var ball in _vm.UndrawnBalls)
+        {
+            var image = new Image
+            {
+                Source = ball.ImageSource,
+                WidthRequest = 40,
+                HeightRequest = 40,
+                Opacity = 0,
+                Scale = 0.85
+            };
+
+            _undrawnContainer.Add(image);
+            await Task.WhenAll(
+                image.FadeTo(1, 180),
+                image.ScaleTo(1, 180)
+            );
+            await Task.Delay(40);
+        }
+    }
+
     private void OnResetClicked(object? sender, EventArgs e)
     {
         // Clear all visual containers
@@ -693,7 +820,8 @@ public class MainPage : ContentPage
         _char1Avatar = null;
         _char2Avatar = null;
         _hiddenBallImage = null;
-        _char2Spacer = null;
+        _char1Spacers.Clear();
+        _char2Spacers.Clear();
         _isChar1Revealed = false;
 
         // Update UI elements
