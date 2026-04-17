@@ -17,7 +17,7 @@ public class MainPage : ContentPage
     private Label _undrawnSubLabel;
     private Label _roundLabel;
     private Button _shuffleBtn;
-    private Button _resetBtn;
+    private ImageButton _resetBtn;
     private Button _modeToggleBtn;
     private Border? _inventoryPanel;
     private readonly List<Label> _inventoryCountLabels = new();
@@ -180,13 +180,13 @@ public class MainPage : ContentPage
         };
         _shuffleBtn.Clicked += OnShuffleClicked;
 
-        _resetBtn = new Button
+        _resetBtn = new ImageButton
         {
-            Text = "RESET",
-            FontSize = 18,
-            FontAttributes = FontAttributes.Bold,
+            Source = CreateResetIconSource(_darkColors.resetText),
             CornerRadius = 12,
             HeightRequest = 50,
+            WidthRequest = 50,
+            Padding = new Thickness(12),
             IsEnabled = false
         };
         _resetBtn.Clicked += OnResetClicked;
@@ -198,6 +198,7 @@ public class MainPage : ContentPage
             FontAttributes = FontAttributes.Bold,
             CornerRadius = 8,
             HeightRequest = 36,
+            WidthRequest = 118,
             Padding = new Thickness(12, 0)
         };
         _modeToggleBtn.Clicked += (s, e) => _vm.ToggleGameModeCommand.Execute(null);
@@ -257,7 +258,7 @@ public class MainPage : ContentPage
         if (_resetBtn != null)
         {
             _resetBtn.BackgroundColor = c.resetBg;
-            _resetBtn.TextColor = c.resetText;
+            _resetBtn.Source = CreateResetIconSource(c.resetText);
         }
 
         // Update round label
@@ -423,7 +424,7 @@ public class MainPage : ContentPage
             Spacing = 24
         };
         _shuffleBtn.WidthRequest = 160;
-        _resetBtn.WidthRequest = 120;
+        _resetBtn.WidthRequest = 50;
         bottomRow.Add(_roundLabel);
         bottomRow.Add(_shuffleBtn);
         bottomRow.Add(_resetBtn);
@@ -473,6 +474,16 @@ public class MainPage : ContentPage
         AbsoluteLayout.SetLayoutFlags(modeOverlay, Microsoft.Maui.Layouts.AbsoluteLayoutFlags.PositionProportional);
 
         return rootLayout;
+    }
+
+    private static ImageSource CreateResetIconSource(Color color)
+    {
+        return new FontImageSource
+        {
+            Glyph = "\u21bb",
+            Color = color,
+            Size = 24
+        };
     }
 
     private async void OnBallAddedToBasket(Pokeball ball, int round)
