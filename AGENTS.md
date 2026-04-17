@@ -50,6 +50,7 @@ VS Code tasks are configured for all of the above — use the task runner.
 
 - **C# with nullable enabled**, implicit usings enabled
 - Private fields: `_camelCase`; properties/methods/events: `PascalCase`
+- **UI field naming (MainPage.cs code-behind exception)**: use `type_name` for UI element fields (for example `btn_modeToggle`, `btn_reset`, `lbl_roundLabel`, `vsl_basketContainers`, `brd_inventoryPanel`) to make control roles immediately recognizable.
 - Use **switch expressions** for type-based mappings (see `Pokeball.AccentColor`)
 - Use **XML doc comments** (`/// <summary>`) on public members
 - Write **code comments in English** (app display name is Chinese, code is English)
