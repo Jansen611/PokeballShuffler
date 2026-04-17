@@ -30,6 +30,7 @@ public class MainPage : ContentPage
     private Grid? _charSlot;        // Overlays hidden ball + char1 in one layout slot
     private readonly List<BoxView> _char1Spacers = new(); // Keep char1 initially at slot 4
     private readonly List<BoxView> _char2Spacers = new(); // Keep char2 initially at slot 4
+    private bool _isUndrawnAnimating;
 
     // Theme color sets
     private readonly (Color bg, Color basketBg, Color basketStroke, Color undrawnBg,
@@ -113,6 +114,7 @@ public class MainPage : ContentPage
                 _char1Spacers.Clear();
                 _char2Spacers.Clear();
                 _isChar1Revealed = false;
+                _isUndrawnAnimating = false;
                 _roundLabel.Text = "Round 1 of 4";
                 _undrawnSubLabel.Text = "15 remaining";
                 _shuffleBtn.IsEnabled = true;
@@ -598,29 +600,47 @@ public class MainPage : ContentPage
         _shuffleBtn.IsEnabled = false;
         _resetBtn.IsEnabled = false;
 
-        await _vm.ShuffleCommand.ExecuteAsync(null);
-
-        // After round 0 in extended mode, update the hidden ball image source
-        if (_isExtendedMode && _hiddenBallImage != null && _vm.HiddenBall != null)
+        bool isFinalRoundShuffle = _vm.CanShuffle && _vm.CurrentRoundDisplay == 4;
+        if (isFinalRoundShuffle)
         {
-            _hiddenBallImage.Source = _vm.HiddenBall.ImageSource;
-        }
-        if (_isExtendedMode)
-        {
-            UpdateChar1AvatarState();
+            _isUndrawnAnimating = true;
+            UpdateChar2AvatarState();
         }
 
-        int nextRound = Math.Min(_vm.CurrentRoundDisplay, 4);
-        _roundLabel.Text = $"Round {nextRound} of 4";
-
-        _shuffleBtn.IsEnabled = _vm.CanShuffle;
-        _resetBtn.IsEnabled = true;
-
-        // After all rounds done, populate undrawn area
-        if (!_vm.CanShuffle)
+        try
         {
-            await Task.Delay(400);
-            await PopulateUndrawnAsync();
+            await _vm.ShuffleCommand.ExecuteAsync(null);
+
+            // After round 0 in extended mode, update the hidden ball image source
+            if (_isExtendedMode && _hiddenBallImage != null && _vm.HiddenBall != null)
+            {
+                _hiddenBallImage.Source = _vm.HiddenBall.ImageSource;
+            }
+            if (_isExtendedMode)
+            {
+                UpdateChar1AvatarState();
+            }
+
+            int nextRound = Math.Min(_vm.CurrentRoundDisplay, 4);
+            _roundLabel.Text = $"Round {nextRound} of 4";
+
+            _shuffleBtn.IsEnabled = _vm.CanShuffle;
+            _resetBtn.IsEnabled = true;
+
+            // After all rounds done, populate undrawn area
+            if (!_vm.CanShuffle)
+            {
+                await Task.Delay(400);
+                await PopulateUndrawnAsync();
+            }
+        }
+        finally
+        {
+            if (isFinalRoundShuffle)
+            {
+                _isUndrawnAnimating = false;
+                UpdateChar2AvatarState();
+            }
         }
     }
 
@@ -766,6 +786,7 @@ public class MainPage : ContentPage
 
     private void OnChar2Clicked()
     {
+        if (_isUndrawnAnimating) return;
         if (!_vm.IsChar2SkillAvailable) return;
         _vm.Char2RerollCommand.Execute(null);
     }
@@ -773,7 +794,9 @@ public class MainPage : ContentPage
     private void UpdateChar2AvatarState()
     {
         if (_char2Avatar == null) return;
-        _char2Avatar.Opacity = _vm.IsChar2SkillAvailable ? 1.0 : 0.3;
+        bool canUseChar2 = _vm.IsChar2SkillAvailable && !_isUndrawnAnimating;
+        _char2Avatar.Opacity = canUseChar2 ? 1.0 : 0.3;
+        _char2Avatar.IsEnabled = canUseChar2;
     }
 
     private void ClearCharAvatars()
@@ -878,6 +901,7 @@ public class MainPage : ContentPage
         _char1Spacers.Clear();
         _char2Spacers.Clear();
         _isChar1Revealed = false;
+        _isUndrawnAnimating = false;
 
         // Update UI elements
         _roundLabel.Text = "Round 1 of 4";
